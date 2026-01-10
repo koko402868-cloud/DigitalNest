@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
 <title>Digital Nest</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
 body{font-family:Arial;background:#f9f9f9;margin:20px}
 h1{text-align:center}
@@ -31,8 +31,6 @@ border-radius:8px;
 <input id="price" placeholder="Price">
 <input id="qty" type="number" placeholder="Qty">
 <button onclick="addItem()">Add</button>
-<input type="file" id="jsonFile">
-<button onclick="importJSON()">Import JSON</button>
 </div>
 
 <div id="catalog"></div>
@@ -45,9 +43,9 @@ document.querySelectorAll(".adminOnly")
 let items=[];
 const catalog=document.getElementById("catalog");
 
-fetch("/api/catalog").then(r=>r.json()).then(d=>{
-  items=d; render();
-});
+fetch("/api/catalog")
+.then(r=>r.json())
+.then(d=>{items=d;render();});
 
 function save(){
   if(!isAdmin) return;
@@ -70,24 +68,10 @@ function addItem(){
       price:price.value,
       qty:+qty.value
     });
-    save(); render();
+    save();
+    render();
   };
   r.readAsDataURL(f);
-}
-
-function importJSON(){
-  if(!isAdmin) return;
-  const f=jsonFile.files[0];
-  const r=new FileReader();
-  r.onload=()=>{
-    items=JSON.parse(r.result);
-    fetch("/api/import?admin=1",{
-      method:"POST",
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify(items)
-    }).then(render);
-  };
-  r.readAsText(f);
 }
 
 function render(){
@@ -117,5 +101,6 @@ function render(){
   });
 }
 </script>
+
 </body>
 </html>
