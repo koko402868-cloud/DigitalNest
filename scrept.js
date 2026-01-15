@@ -2,9 +2,21 @@ let products = [];
 let cart = [];
 let currentProduct = null;
 
+/* GET ELEMENTS (အရင်ဆုံး) */
+const productsDiv = document.getElementById("products");
+const overlay = document.getElementById("overlay");
+const oImg = document.getElementById("oImg");
+const oName = document.getElementById("oName");
+const oDesc = document.getElementById("oDesc");
+const oPrice = document.getElementById("oPrice");
+const oStock = document.getElementById("oStock");
+const addBtn = document.getElementById("addBtn");
+const cartCount = document.getElementById("cartCount");
+const cartTotal = document.getElementById("cartTotal");
+const searchInput = document.getElementById("searchInput");
+
 /* PRICE STRING → NUMBER */
 function parsePrice(priceStr) {
-  // "42,000 Ks" → 42000
   return Number(priceStr.replace(/[^0-9]/g, ""));
 }
 
@@ -15,14 +27,14 @@ fetch("products.json")
     products = data;
     renderProducts(products);
   })
-  .catch(() => {
-    document.getElementById("products").innerHTML = "Failed to load data";
+  .catch(err => {
+    productsDiv.innerHTML = "❌ Failed to load data";
+    console.error(err);
   });
 
 /* RENDER PRODUCTS */
 function renderProducts(list) {
-  const container = document.getElementById("products");
-  container.innerHTML = "";
+  productsDiv.innerHTML = "";
 
   list.forEach(item => {
     const card = document.createElement("div");
@@ -38,17 +50,16 @@ function renderProducts(list) {
         <p class="price">${item.price}</p>
       </div>
     `;
-    container.appendChild(card);
+    productsDiv.appendChild(card);
   });
 }
 
 /* SEARCH */
 function searchProducts() {
   const text = searchInput.value.toLowerCase();
-  const filtered = products.filter(p =>
+  renderProducts(products.filter(p =>
     p.name.toLowerCase().includes(text)
-  );
-  renderProducts(filtered);
+  ));
 }
 
 /* OPEN OVERLAY */
@@ -92,13 +103,11 @@ addBtn.onclick = function () {
   closeOverlay();
 };
 
-/* UPDATE CART UI */
+/* UPDATE CART */
 function updateCartUI() {
-  const totalQty = cart.reduce((sum, i) => sum + i.qty, 0);
-  const totalPrice = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
-
-  cartCount.innerText = totalQty;
-  cartTotal.innerText = totalPrice.toLocaleString() + " Ks";
+  cartCount.innerText = cart.reduce((s, i) => s + i.qty, 0);
+  cartTotal.innerText =
+    cart.reduce((s, i) => s + i.price * i.qty, 0).toLocaleString() + " Ks";
 }
 
 /* CHECKOUT */
@@ -110,21 +119,14 @@ function checkout() {
 
   const order = {
     orderId: "ORD-" + Date.now(),
-    items: cart.map(i => ({
-      id: i.id,
-      name: i.name,
-      price: i.priceText,
-      quantity: i.qty,
-      subTotal: (i.price * i.qty).toLocaleString() + " Ks"
-    })),
-    total: cart.reduce((s, i) => s + i.price * i.qty, 0).toLocaleString() + " Ks",
+    items: cart,
+    total: cart.reduce((s, i) => s + i.price * i.qty, 0) + " Ks",
     time: new Date().toLocaleString()
   };
 
-  const blob = new Blob(
-    [JSON.stringify(order, null, 2)],
-    { type: "application/json" }
-  );
+  const blob = new Blob([JSON.stringify(order, null, 2)], {
+    type: "application/json"
+  });
 
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
