@@ -12,6 +12,7 @@
   <h1>🛒 Digital Nest</h1>
   <p>Search any products in the box</p>
 
+  <!-- SEARCH BAR -->
   <input
     type="text"
     id="searchInput"
@@ -24,12 +25,11 @@
 <div id="cartBar">
   🛒 Cart: <span id="cartCount">0</span> items |
   Total: <span id="cartTotal">0</span> Ks
-  <button onclick="checkout()">Checkout</button>
 </div>
 
 <div id="products"></div>
 
-<!-- PRODUCT OVERLAY -->
+<!-- PRODUCT DETAIL OVERLAY -->
 <div id="overlay">
   <div class="overlay-box">
     <span class="close" onclick="closeOverlay()">✕</span>
@@ -40,14 +40,13 @@
     <p id="oPrice"></p>
     <p id="oStock"></p>
 
-    <!-- Add to Cart Button -->
     <button id="addBtn">Add to Cart</button>
   </div>
 </div>
 
-<!-- ADD ITEM SECTION -->
+<!-- ADD CUSTOM ITEM SECTION -->
 <div id="add-item-section">
-  <input type="text" id="itemInput" placeholder="Enter item name">
+  <input type="text" id="itemInput" placeholder="Enter custom item name">
   <button id="addItemBtn">Add Item</button>
 </div>
 
