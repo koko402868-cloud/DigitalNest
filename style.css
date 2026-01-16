@@ -5,7 +5,6 @@ body {
   font-family: Arial, sans-serif;
   background: #f2f2f2;
   margin: 0;
-  text-align: center;
 }
 
 /* =====================
@@ -30,14 +29,6 @@ header {
   border: none;
   outline: none;
   font-size: 14px;
-}
-
-/* =====================
-   CART BAR
-===================== */
-#cartBar {
-  margin: 15px 0;
-  font-size: 18px;
 }
 
 /* =====================
@@ -173,62 +164,4 @@ header {
   color: red;
   font-size: 28px;
   cursor: pointer;
-}
-
-/* =====================
-   ADD ITEM SECTION
-===================== */
-#add-item-section {
-  margin: 20px 0;
-}
-
-#itemInput, #addItemBtn {
-  padding: 10px;
-  font-size: 16px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  outline: none;
-  margin: 0 5px;
-}
-
-#addItemBtn {
-  cursor: pointer;
-  background: green;
-  color: white;
-  border: none;
-}
-
-/* =====================
-   CUSTOM ITEM LIST
-===================== */
-#item-list {
-  list-style: none;
-  padding: 0;
-  max-width: 400px;
-  margin: 0 auto 20px auto;
-}
-
-#item-list li {
-  padding: 10px;
-  font-size: 16px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  margin-bottom: 5px;
-  background: white;
-}
-
-.item-controls button {
-  margin-left: 5px;
-  padding: 3px 6px;
-  font-size: 14px;
-  cursor: pointer;
-  border: none;
-  border-radius: 3px;
-}
-
-.item-controls button:hover {
-  opacity: 0.8;
 }
