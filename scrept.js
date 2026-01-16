@@ -1,35 +1,119 @@
-// ------------------------
-// Existing product overlay logic
-// ------------------------
-const overlay = document.getElementById("overlay");
-const oImg = document.getElementById("oImg");
-const oName = document.getElementById("oName");
-const oDesc = document.getElementById("oDesc");
-const oPrice = document.getElementById("oPrice");
-const oStock = document.getElementById("oStock");
-const addBtn = document.getElementById("addBtn");
+let products = [];
+let cart = [];
 
-function closeOverlay() {
-  overlay.style.display = "none";
+/* LOAD PRODUCTS */
+fetch("products.json")
+  .then(res => res.json())
+  .then(data => {
+    products = data;
+    renderProducts(products);
+  });
+
+/* RENDER PRODUCTS */
+function renderProducts(list) {
+  const container = document.getElementById("products");
+  container.innerHTML = "";
+
+  list.forEach(item => {
+    const card = document.createElement("div");
+    card.className = "card";
+
+    let label = "";
+    if (item.stock === 0) label = `<div class="stock-label">OUT OF STOCK</div>`;
+    else if (item.stock < 10) label = `<div class="stock-label low-stock">LOW STOCK</div>`;
+
+    card.innerHTML = `
+      ${label}
+      <img src="${item.image}" onclick="openOverlay(${item.id})">
+      <div class="info">
+        <h3>${item.name}</h3>
+        <p class="price">${item.price}</p>
+      </div>
+    `;
+    container.appendChild(card);
+  });
 }
 
-// Dummy function for search
+/* SEARCH */
 function searchProducts() {
-  // Implement search logic here
+  const text = document.getElementById("searchInput").value.toLowerCase();
+  const filtered = products.filter(p =>
+    p.name.toLowerCase().includes(text)
+  );
+  renderProducts(filtered);
 }
 
-// Dummy checkout
-function checkout() {
-  alert("Checkout not implemented yet");
+/* OPEN OVERLAY */
+function openOverlay(id) {
+  const item = products.find(p => p.id === id);
+
+  document.getElementById("overlay").style.display = "flex";
+  document.getElementById("oImg").src = item.image;
+  document.getElementById("oName").innerText = item.name;
+  document.getElementById("oDesc").innerText = item.description;
+  document.getElementById("oPrice").innerText = "Price: " + item.price;
+
+  const stockText = document.getElementById("oStock");
+
+  if (item.stock === 0) {
+    stockText.innerText = "Status: OUT OF STOCK";
+    stockText.style.color = "red";
+    document.getElementById("addBtn").disabled = true;
+  } else if (item.stock < 10) {
+    stockText.innerText = "Status: LOW STOCK";
+    stockText.style.color = "orange";
+    document.getElementById("addBtn").disabled = false;
+  } else {
+    stockText.innerText = "In Stock";
+    stockText.style.color = "green";
+    document.getElementById("addBtn").disabled = false;
+  }
+
+  // Add to Cart overlay button
+  const addBtn = document.getElementById("addBtn");
+  addBtn.onclick = () => addToCart(item);
 }
 
-// ------------------------
-// ADD ITEM FUNCTION
-// ------------------------
+/* CLOSE OVERLAY */
+function closeOverlay() {
+  document.getElementById("overlay").style.display = "none";
+}
+
+/* ------------------ */
+/* CART LOGIC         */
+/* ------------------ */
+const cartCountEl = document.getElementById("cartCount");
+const cartTotalEl = document.getElementById("cartTotal");
 const itemInput = document.getElementById("itemInput");
 const addItemBtn = document.getElementById("addItemBtn");
 const itemList = document.getElementById("item-list");
 
+function addToCart(item) {
+  const existing = cart.find(c => c.id === item.id);
+  if (existing) existing.qty++;
+  else cart.push({...item, qty: 1});
+
+  updateCartDisplay();
+  saveOrder({...item, qty: 1}); // save to localStorage orders
+  closeOverlay();
+}
+
+function updateCartDisplay() {
+  let totalItems = 0;
+  let totalPrice = 0;
+
+  cart.forEach(i => {
+    totalItems += i.qty;
+    totalPrice += parseInt(i.price.replace(/,/g,'').replace(' Ks','')) * i.qty;
+  });
+
+  cartCountEl.innerText = totalItems;
+  cartTotalEl.innerText = totalPrice.toLocaleString() + " Ks";
+}
+
+/* ------------------ */
+/* CUSTOM ADD ITEM    */
+/* ------------------ */
 addItemBtn.addEventListener("click", () => {
   const itemName = itemInput.value.trim();
   if (!itemName) return;
@@ -83,3 +167,19 @@ addItemBtn.addEventListener("click", () => {
   // Clear input
   itemInput.value = "";
 });
+
+/* ------------------ */
+/* SAVE ORDERS        */
+/* ------------------ */
+function saveOrder(item) {
+  let orders = JSON.parse(localStorage.getItem("orders")) || [];
+  const timestamp = new Date().toLocaleString();
+  orders.push({
+    id: item.id,
+    name: item.name,
+    price: item.price,
+    time: timestamp,
+    qty: item.qty
+  });
+  localStorage.setItem("orders", JSON.stringify(orders));
+}
