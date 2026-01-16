@@ -11,7 +11,7 @@
     "id": 2,
     "name": "Pin Header",
     "price": "500 Ks",
-    "image": "images/LCD Blue backlight.jpg",
+    "image": "images/LCD Blue backlight.png",
     "description": "Male pin header for PCB",
     "stock": 0
   },
@@ -19,9 +19,10 @@
     "id": 3,
     "name": "LCD 16x2",
     "price": "12,000 Ks",
-    "image": "images/LED Yellow 5mm .jpg",
+    "image": "images/LED Yellow 5mm .png",
     "description": "16x2 character LCD display",
     "stock": 3
   }
 ]
+
 
