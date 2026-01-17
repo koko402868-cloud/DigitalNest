@@ -85,7 +85,6 @@ header {
   font-weight: bold;
   font-size: 18px;
 }
-
 /* =====================
    STOCK LABEL
 ===================== */
@@ -106,7 +105,6 @@ header {
   background: orange;
   color: white;
 }
-
 /* =====================
    OVERLAY (CENTER)
 ===================== */
@@ -169,4 +167,5 @@ header {
   font-size: 28px;
   cursor: pointer;
 }
+
 
