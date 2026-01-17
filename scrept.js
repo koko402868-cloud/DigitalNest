@@ -1,38 +1,109 @@
-<script>
+let products = [];
+let currentProduct = null;
+
+/* LOAD PRODUCTS */
 fetch("products.json")
   .then(res => res.json())
   .then(data => {
-    const container = document.getElementById("products");
-
-    data.forEach(item => {
-      const card = document.createElement("div");
-      card.className = "card";
-
-      card.innerHTML = `
-        <img src="${item.image}" alt="${item.name}" onclick="openImage('${item.image}', '${item.name}')">
-        <div class="info">
-          <h3>${item.name}</h3>
-          <p>${item.description}</p>
-          <p class="price">${item.price}</p>
-        </div>
-      `;
-
-      container.appendChild(card);
-    });
-  })
-  .catch(err => {
-    document.getElementById("products").innerHTML = "Failed to load data";
+    products = data;
+    renderProducts(products);
   });
 
-/* Image open function */
-function openImage(src, name) {
-  document.getElementById("imgModal").style.display = "block";
-  document.getElementById("modalImg").src = src;
-  document.getElementById("caption").innerText = name;
+/* RENDER PRODUCTS */
+function renderProducts(list) {
+  const container = document.getElementById("products");
+  container.innerHTML = "";
+
+  list.forEach(item => {
+    const card = document.createElement("div");
+    card.className = "card";
+
+    let label = "";
+
+    if (item.stock === 0) {
+      card.classList.add("out-stock");
+      label = `<div class="stock-label stock-out">OUT OF STOCK</div>`;
+    } 
+    else if (item.stock <= 5) {
+      label = `<div class="stock-label stock-low">LOW STOCK</div>`;
+    }
+
+    card.innerHTML = `
+      ${label}
+      <img src="${item.image}" onclick="openOverlay(${item.id})">
+      <div class="info">
+        <h3>${item.name}</h3>
+        <p class="price">${item.price}</p>
+      </div>
+    `;
+
+    container.appendChild(card);
+  });
 }
 
-/* Close modal */
-document.querySelector(".close").onclick = function() {
-  document.getElementById("imgModal").style.display = "none";
-};
-</script>
+/* SEARCH */
+function searchProducts() {
+  const text = document.getElementById("searchInput").value.toLowerCase();
+  const filtered = products.filter(p =>
+    p.name.toLowerCase().includes(text)
+  );
+  renderProducts(filtered);
+}
+
+/* OPEN OVERLAY */
+function openOverlay(id) {
+  const item = products.find(p => p.id === id);
+  currentProduct = item;
+
+  document.getElementById("overlay").style.display = "flex";
+  document.getElementById("oImg").src = item.image;
+  document.getElementById("oName").innerText = item.name;
+  document.getElementById("oDesc").innerText = item.description;
+  document.getElementById("oPrice").innerText = "Price: " + item.price;
+
+  const stockText = document.getElementById("oStock");
+  const btn = document.getElementById("buyBtn");
+
+  if (item.stock === 0) {
+    stockText.innerText = "OUT OF STOCK";
+    stockText.style.color = "red";
+    btn.disabled = true;
+    btn.innerText = "Unavailable";
+  } 
+  else if (item.stock <= 5) {
+    stockText.innerText = "LOW STOCK";
+    stockText.style.color = "orange";
+    btn.disabled = false;
+    btn.innerText = "Add to Cart";
+    btn.onclick = addToCart;
+  } 
+  else {
+    stockText.innerText = "In Stock";
+    stockText.style.color = "green";
+    btn.disabled = false;
+    btn.innerText = "Add to Cart";
+    btn.onclick = addToCart;
+  }
+}
+
+/* ADD TO CART */
+function addToCart() {
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+  cart.push({
+    id: currentProduct.id,
+    name: currentProduct.name,
+    price: currentProduct.price,
+    image: currentProduct.image,
+    time: new Date().toLocaleString()
+  });
+
+  localStorage.setItem("cart", JSON.stringify(cart));
+  alert("🛒 Added to cart!");
+  closeOverlay();
+}
+
+/* CLOSE OVERLAY */
+function closeOverlay() {
+  document.getElementById("overlay").style.display = "none";
+}
