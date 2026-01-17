@@ -8,7 +8,6 @@ fetch("products.json")
     products = data;
     renderProducts(products);
   });
-
 /* RENDER PRODUCTS */
 function renderProducts(list) {
   const container = document.getElementById("products");
@@ -27,7 +26,6 @@ function renderProducts(list) {
     else if (item.stock <= 5) {
       label = `<div class="stock-label stock-low">LOW STOCK</div>`;
     }
-
     card.innerHTML = `
       ${label}
       <img src="${item.image}" onclick="openOverlay(${item.id})">
@@ -107,3 +105,4 @@ function addToCart() {
 function closeOverlay() {
   document.getElementById("overlay").style.display = "none";
 }
+
