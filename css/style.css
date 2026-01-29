@@ -1,15 +1,59 @@
 body { font-family: Arial; margin:0; background:#f2f2f2; }
-header { background:#111; color:white; padding:15px; display:flex; gap:10px; align-items:center; }
+header {
+background:#111;
+padding:20px 0;
+}
+
+
+.header-inner{
+max-width:1100px; /* page center width */
+margin:0 auto; /* page center */
+display:flex;
+justify-content:center; /* search + cart center */
+align-items:center;
+gap:15px;
+}
+
+
+.logo{
+position:absolute;
+left:30px; /* logo stays left */
+height:40px;
+}
+
+
+#search{
+width:300px;
+padding:10px;
+border-radius:6px;
+border:none;
+}
+
+
+.cart-btn{
+padding:10px 16px;
+background:#333;
+color:white;
+border-radius:6px;
+text-decoration:none;
+}
 .logo { height:40px; }
 #search { padding:8px; width:250px; }
 .cart-btn { color:white; text-decoration:none; background:#333; padding:8px 12px; }
-.grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:20px; padding:20px; }
+.grid{
+max-width:1100px; /* product list center */
+margin:20px auto; /* center whole list */
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:20px;
+}
 .card { background:white; padding:10px; border-radius:8px; text-align:center; }
 .card img { width:100%; cursor:pointer; }
 .in { color:green; }
 .low { color:orange; }
 .out { color:red; }
 button { padding:8px; background:#4CAF50; color:white; border:none; cursor:pointer; }
+
 
 .modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); text-align:center; }
 .modal img { max-width:300px; margin-top:50px; }
