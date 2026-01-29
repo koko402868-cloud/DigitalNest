@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "name": "Arduino Pro Micro Board",
+    "price": 12000,
+    "stock": "in",
+    "image": "images/arduino_micro.jpg",
+    "description": "ATmega32U4 based Arduino board"
+  },
+  {
+    "id": 2,
+    "name": "Arduino Uno R3 Board",
+    "price": 42000,
+    "stock": "low",
+    "image": "images/arduino_uno.jpg",
+    "description": "Most popular Arduino board"
+  },
+  {
+    "id": 3,
+    "name": "Op-Amp 741 IC",
+    "price": 1200,
+    "stock": "out",
+    "image": "images/ic741.jpg",
+    "description": "Operational Amplifier IC"
+  }
+]
