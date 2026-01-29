@@ -1,7 +1,6 @@
 const box = document.getElementById('products');
 const search = document.getElementById('search');
 
-
 function render(list) {
 box.innerHTML='';
 list.forEach(p => {
@@ -38,3 +37,4 @@ modalDesc.innerText=p.description;
 
 close.onclick=()=>modal.style.display='none';
 setTimeout(()=>render(PRODUCTS),500);
+
