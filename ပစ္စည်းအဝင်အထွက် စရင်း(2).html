@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>မဥ္ဇူသက - ကုန်ပစ္စည်း အဝင်အထွက် နှင့် အရှုံးအမြတ် စာရင်း</title>
+    <!-- Tailwind CSS for Modern UI -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Font for Myanmar Text -->
+    <link href="https://fonts.googleapis.com/css2?family=Padauk:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Padauk', sans-serif;
+            background-color: #f3f4f6;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-7xl mx-auto space-y-6">
+        
+        <!-- Shop Header & Logo Section -->
+        <div class="bg-white p-6 rounded-xl shadow-md border-b-4 border-indigo-600 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-4 text-center sm:text-left">
+                
+                <!-- Shop Logo with File Directory Path -->
+                <div> 
+                    <!-- 
+                       အောက်ပါ src="logo.png" နေရာတွင် မိမိပုံဖိုင်အမည် (သို့) Folder လမ်းကြောင်း ရေးပါ 
+                       ဥပမာ - src="logo.jpg" သို့မဟုတ် src="images/logo.png" 
+                    -->
+                    <img id="shopLogo" src="uzu.png" onerror="this.src='https://via.placeholder.com/100?text=Logo'" alt="မဥ္ဇူသက Logo" class="w-20 h-20 object-cover rounded-full border-2 border-indigo-500 shadow">
+                </div>
+
+                <div>
+                    <!-- Shop Name -->
+                    <h1 class="text-3xl font-bold text-indigo-900">မဥ္ဇူသက</h1>
+                    <p class="text-sm font-medium text-gray-500 mt-1">ကုန်ပစ္စည်း အဝင်အထွက် နှင့် အရှုံးအမြတ် စာရင်းဇယား</p>
+                </div>
+            </div>
+
+            <!-- Export / Import Action Buttons -->
+            <div class="flex flex-wrap gap-2">
+                <button onclick="exportData()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg font-medium shadow flex items-center gap-2 transition text-sm">
+                    📥 Export (Download)
+                </button>
+                <label class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium shadow cursor-pointer flex items-center gap-2 transition text-sm">
+                    📤 Import (Upload)
+                    <input type="file" id="importFile" onchange="importData(event)" class="hidden" accept=".json">
+                </label>
+            </div>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="bg-white p-5 rounded-xl shadow border-l-4 border-indigo-500">
+                <p class="text-sm font-medium text-gray-500">ပစ္စည်း အမျိုးအမည်</p>
+                <h3 id="totalItems" class="text-2xl font-bold text-gray-800 mt-1">0</h3>
+            </div>
+            <div class="bg-white p-5 rounded-xl shadow border-l-4 border-emerald-500">
+                <p class="text-sm font-medium text-gray-500">စုစုပေါင်း အမြတ်ငွေ</p>
+                <h3 id="totalProfit" class="text-2xl font-bold text-emerald-600 mt-1">0 ကျပ်</h3>
+            </div>
+            <div class="bg-white p-5 rounded-xl shadow border-l-4 border-amber-500">
+                <p class="text-sm font-medium text-gray-500">စုစုပေါင်း ရောင်းရငွေ</p>
+                <h3 id="totalRevenue" class="text-2xl font-bold text-amber-600 mt-1">0 ကျပ်</h3>
+            </div>
+            <div class="bg-white p-5 rounded-xl shadow border-l-4 border-purple-500">
+                <p class="text-sm font-medium text-gray-500">လက်ကျန် ပစ္စည်းတန်ဖိုး (ဝယ်စျေး)</p>
+                <h3 id="totalStockValue" class="text-2xl font-bold text-purple-600 mt-1">0 ကျပ်</h3>
+            </div>
+        </div>
+
+        <!-- Form Input Section -->
+        <div class="bg-white p-6 rounded-xl shadow-md">
+            <h2 class="text-lg font-bold text-gray-800 mb-4" id="formTitle">➕ ကုန်ပစ္စည်း အသစ်ထည့်ရန်</h2>
+            <form id="productForm" onsubmit="handleFormSubmit(event)" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
+                <input type="hidden" id="editIndex" value="-1">
+                
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">ကုန်ပစ္စည်း အမည်</label>
+                    <input type="text" id="name" required placeholder="ဥပမာ - ကော်ဖီမစ်" class="w-full border border-gray-300 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">ဝယ်စျေး (ကျပ်)</label>
+                    <input type="number" min="0" step="any" id="costPrice" required placeholder="0" class="w-full border border-gray-300 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">အဝင် အရေအတွက်</label>
+                    <input type="number" min="0" id="stockIn" required placeholder="0" class="w-full border border-gray-300 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">အမြတ် (%)</label>
+                    <input type="number" min="0" step="any" id="profitMargin" required placeholder="10" class="w-full border border-gray-300 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">ကုန်ထွက် (ရောင်းရ)</label>
+                    <input type="number" min="0" id="stockOut" value="0" required class="w-full border border-gray-300 p-2.5 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                </div>
+
+                <div class="flex items-end gap-2">
+                    <button type="submit" id="submitBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-lg shadow transition">
+                        သိမ်းဆည်းမည်
+                    </button>
+                    <button type="button" id="cancelBtn" onclick="resetForm()" class="hidden bg-gray-400 hover:bg-gray-500 text-white font-semibold py-2.5 px-4 rounded-lg transition">
+                        မလုပ်တော့ပါ
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Table Section -->
+        <div class="bg-white rounded-xl shadow-md overflow-hidden">
+            <div class="p-4 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-4">
+                <h2 class="text-lg font-bold text-gray-800">📋 ကုန်ပစ္စည်း စာရင်းဇယား</h2>
+                <input type="text" id="searchInput" oninput="renderTable()" placeholder="🔍 ပစ္စည်းအမည် ရှာဖွေရန်..." class="w-full sm:w-64 border border-gray-300 px-3 py-1.5 rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-500">
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-gray-100 text-gray-700 text-sm font-bold border-b border-gray-200">
+                            <th class="p-3">စဉ်</th>
+                            <th class="p-3">ပစ္စည်း အမျိုးအမည်</th>
+                            <th class="p-3 text-right">ဝယ်စျေး</th>
+                            <th class="p-3 text-center">အဝင် အရေအတွက်</th>
+                            <th class="p-3 text-center">အမြတ် %</th>
+                            <th class="p-3 text-right">ရောင်းစျေး</th>
+                            <th class="p-3 text-center">ကုန်ထွက် (ရောင်းရ)</th>
+                            <th class="p-3 text-center">ကုန်လက်ကျန်</th>
+                            <th class="p-3 text-right">အမြတ်ငွေ</th>
+                            <th class="p-3 text-center">လုပ်ဆောင်ချက်</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inventoryTableBody" class="text-sm divide-y divide-gray-200">
+                        <!-- Dynamic Rows -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        let inventory = JSON.parse(localStorage.getItem('my_inventory_data')) || [];
+
+        // App Initialization
+        document.addEventListener('DOMContentLoaded', () => {
+            renderTable();
+        });
+
+        // Save Data to LocalStorage
+        function saveData() {
+            localStorage.setItem('my_inventory_data', JSON.stringify(inventory));
+            renderTable();
+        }
+
+        // Add or Update Item
+        function handleFormSubmit(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('name').value.trim();
+            const costPrice = parseFloat(document.getElementById('costPrice').value) || 0;
+            const stockIn = parseInt(document.getElementById('stockIn').value) || 0;
+            const profitMargin = parseFloat(document.getElementById('profitMargin').value) || 0;
+            const stockOut = parseInt(document.getElementById('stockOut').value) || 0;
+            const editIndex = parseInt(document.getElementById('editIndex').value);
+
+            if (stockOut > stockIn) {
+                alert("သတိပေးချက်: ကုန်ထွက်အရေအတွက်သည် အဝင်အရေအတွက်ထက် ပိုများ၍ မရပါ!");
+                return;
+            }
+
+            const itemData = { name, costPrice, stockIn, profitMargin, stockOut };
+
+            if (editIndex === -1) {
+                inventory.push(itemData);
+            } else {
+                inventory[editIndex] = itemData;
+            }
+
+            saveData();
+            resetForm();
+        }
+
+        // Render Table & Summary Cards
+        function renderTable() {
+            const tbody = document.getElementById('inventoryTableBody');
+            const searchKeyword = document.getElementById('searchInput').value.toLowerCase();
+            tbody.innerHTML = '';
+
+            let totalItemsCount = 0;
+            let grandTotalProfit = 0;
+            let grandTotalRevenue = 0;
+            let grandTotalStockValue = 0;
+
+            inventory.forEach((item, index) => {
+                if (searchKeyword && !item.name.toLowerCase().includes(searchKeyword)) {
+                    return;
+                }
+
+                // Calculations
+                const sellingPrice = item.costPrice + (item.costPrice * (item.profitMargin / 100));
+                const remainingStock = item.stockIn - item.stockOut;
+                const profitPerUnit = sellingPrice - item.costPrice;
+                const totalProfit = profitPerUnit * item.stockOut;
+                const totalRevenue = sellingPrice * item.stockOut;
+                const remainingValue = remainingStock * item.costPrice;
+
+                // Accumulate Summaries
+                totalItemsCount++;
+                grandTotalProfit += totalProfit;
+                grandTotalRevenue += totalRevenue;
+                grandTotalStockValue += remainingValue;
+
+                // Stock status color badge
+                let stockBadge = `<span class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">${remainingStock}</span>`;
+                if (remainingStock === 0) {
+                    stockBadge = `<span class="px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-semibold">ကုန်ပြီ</span>`;
+                } else if (remainingStock < 5) {
+                    stockBadge = `<span class="px-2 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-semibold">${remainingStock} (နည်းနေသည်)</span>`;
+                }
+
+                const row = `
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="p-3 text-gray-500">${index + 1}</td>
+                        <td class="p-3 font-semibold text-gray-800">${item.name}</td>
+                        <td class="p-3 text-right">${item.costPrice.toLocaleString()} ကျပ်</td>
+                        <td class="p-3 text-center">${item.stockIn}</td>
+                        <td class="p-3 text-center">${item.profitMargin}%</td>
+                        <td class="p-3 text-right font-medium text-indigo-600">${Math.round(sellingPrice).toLocaleString()} ကျပ်</td>
+                        <td class="p-3 text-center">${item.stockOut}</td>
+                        <td class="p-3 text-center">${stockBadge}</td>
+                        <td class="p-3 text-right font-semibold ${totalProfit >= 0 ? 'text-emerald-600' : 'text-red-600'}">
+                            ${Math.round(totalProfit).toLocaleString()} ကျပ်
+                        </td>
+                        <td class="p-3 text-center space-x-1">
+                            <button onclick="editItem(${index})" class="text-blue-600 hover:text-blue-800 font-medium text-xs bg-blue-50 hover:bg-blue-100 px-2.5 py-1.5 rounded transition">ပြင်မည်</button>
+                            <button onclick="deleteItem(${index})" class="text-red-600 hover:text-red-800 font-medium text-xs bg-red-50 hover:bg-red-100 px-2.5 py-1.5 rounded transition">ဖျက်မည်</button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+
+            if (tbody.innerHTML === '') {
+                tbody.innerHTML = `<tr><td colspan="10" class="text-center p-6 text-gray-400">စာရင်း အချက်အလက် မရှိသေးပါ။</td></tr>`;
+            }
+
+            // Update Summaries in Cards
+            document.getElementById('totalItems').innerText = totalItemsCount;
+            document.getElementById('totalProfit').innerText = Math.round(grandTotalProfit).toLocaleString() + ' ကျပ်';
+            document.getElementById('totalRevenue').innerText = Math.round(grandTotalRevenue).toLocaleString() + ' ကျပ်';
+            document.getElementById('totalStockValue').innerText = Math.round(grandTotalStockValue).toLocaleString() + ' ကျပ်';
+        }
+
+        // Edit Item
+        function editItem(index) {
+            const item = inventory[index];
+            document.getElementById('name').value = item.name;
+            document.getElementById('costPrice').value = item.costPrice;
+            document.getElementById('stockIn').value = item.stockIn;
+            document.getElementById('profitMargin').value = item.profitMargin;
+            document.getElementById('stockOut').value = item.stockOut;
+            document.getElementById('editIndex').value = index;
+
+            document.getElementById('formTitle').innerText = '✏️ ကုန်ပစ္စည်း စာရင်း ပြင်ဆင်ရန်';
+            document.getElementById('submitBtn').innerText = 'ပြင်ဆင်ချက် သိမ်းမည်';
+            document.getElementById('cancelBtn').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Delete Item
+        function deleteItem(index) {
+            if (confirm("ဤကုန်ပစ္စည်း စာရင်းကို အမှန်တကယ် ဖျက်လိုပါသလား?")) {
+                inventory.splice(index, 1);
+                saveData();
+            }
+        }
+
+        // Reset Form
+        function resetForm() {
+            document.getElementById('productForm').reset();
+            document.getElementById('editIndex').value = -1;
+            document.getElementById('formTitle').innerText = '➕ ကုန်ပစ္စည်း အသစ်ထည့်ရန်';
+            document.getElementById('submitBtn').innerText = 'သိမ်းဆည်းမည်';
+            document.getElementById('cancelBtn').classList.add('hidden');
+        }
+
+        // Export Data to JSON File
+        function exportData() {
+            if (inventory.length === 0) {
+                alert("Export လုပ်ရန် စာရင်း အချက်အလက် မရှိပါ။");
+                return;
+            }
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(inventory, null, 2));
+            const downloadAnchor = document.createElement('a');
+            const dateStr = new Date().toISOString().slice(0, 10);
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `Manzuthaka_Inventory_${dateStr}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        // Import Data from JSON File
+        function importData(event) {
+            const fileReader = new FileReader();
+            fileReader.onload = function (e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    if (Array.isArray(importedData)) {
+                        if (confirm("လက်ရှိ စာရင်းများပေါ်သို့ Import လုပ်ထားသော စာရင်းများ ဖြည့်စွက်/အစားထိုး မည်မှာ သေချာပါသလား?")) {
+                            inventory = importedData;
+                            saveData();
+                            alert("စာရင်းများ အောင်မြင်စွာ Import လုပ်ပြီးပါပြီ!");
+                        }
+                    } else {
+                        alert("ဖိုင် ပုံစံ မမှန်ကန်ပါ။ JSON Format ဖိုင် ဖြစ်ရပါမည်။");
+                    }
+                } catch (error) {
+                    alert("ဖိုင် ဖတ်ရှုရာတွင် အမှားအယွင်း ရှိနေပါသည်။");
+                }
+            };
+            fileReader.readAsText(event.target.files[0]);
+            event.target.value = '';
+        }
+    </script>
+</body>
+</html>
